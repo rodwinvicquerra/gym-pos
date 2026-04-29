@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@neondatabase/serverless';
+import { sql } from '@/lib/db';
 import { verifyPassword, generateSessionToken, createSession } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {

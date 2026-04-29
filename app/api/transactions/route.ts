@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@neondatabase/serverless';
+import { sql } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(request: NextRequest) {
@@ -7,22 +7,24 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const memberId = searchParams.get('member_id');
 
-    let query = sql`
-      SELECT t.*, m.first_name, m.last_name
-      FROM transactions t
-      LEFT JOIN members m ON t.member_id = m.id
-    `;
+    let result;
 
     if (memberId) {
-      query = sql`
+      result = await sql`
         SELECT t.*, m.first_name, m.last_name
         FROM transactions t
         LEFT JOIN members m ON t.member_id = m.id
         WHERE t.member_id = ${memberId}
+        ORDER BY t.created_at DESC
+      `;
+    } else {
+      result = await sql`
+        SELECT t.*, m.first_name, m.last_name
+        FROM transactions t
+        LEFT JOIN members m ON t.member_id = m.id
+        ORDER BY t.created_at DESC
       `;
     }
-
-    const result = await sql`${query} ORDER BY t.created_at DESC`;
 
     return NextResponse.json({
       transactions: result.rows,

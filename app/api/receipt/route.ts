@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@neondatabase/serverless';
+import { sql } from '@/lib/db';
 import jsPDF from 'jspdf';
 
 export async function GET(request: NextRequest) {

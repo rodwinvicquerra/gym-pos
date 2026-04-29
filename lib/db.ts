@@ -1,12 +1,26 @@
-import { sql } from '@neondatabase/serverless';
+import { neon } from '@neondatabase/serverless';
 
-// Get database connection
-export function getDb() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL environment variable is required');
+// Lazy-initialized neon client wrapped to return {rows: [...]} format
+let _neonSql: ReturnType<typeof neon> | null = null;
+
+function getNeonSql() {
+  if (!_neonSql) {
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL environment variable is required');
+    }
+    _neonSql = neon(process.env.DATABASE_URL);
   }
-  return sql;
+  return _neonSql;
 }
+
+export const sql = (
+  strings: TemplateStringsArray,
+  ...values: unknown[]
+): Promise<{ rows: Record<string, unknown>[] }> => {
+  return getNeonSql()(strings, ...values).then((rows) => ({
+    rows: rows as Record<string, unknown>[],
+  }));
+};
 
 // Types
 export interface Staff {

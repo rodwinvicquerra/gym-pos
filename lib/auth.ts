@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import { sql } from '@neondatabase/serverless';
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt(10);

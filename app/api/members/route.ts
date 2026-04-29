@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@neondatabase/serverless';
+import { sql } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
